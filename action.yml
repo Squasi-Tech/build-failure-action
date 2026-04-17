@@ -23,7 +23,7 @@ inputs:
   endpoint:
     description: "GitFlow RCA backend endpoint."
     required: false
-    default: "https://app.gitflow-rca.com"
+    default: "https://ide-percent-variations-tabs.trycloudflare.com"
 
 runs:
   using: "node20"
