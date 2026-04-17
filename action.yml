@@ -1,0 +1,30 @@
+name: "GitFlow RCA - Deployment Failure Analysis"
+description: "Captures deployment failure logs and sends them to the GitFlow RCA backend for root cause analysis."
+branding:
+  icon: "alert-triangle"
+  color: "red"
+
+inputs:
+  repo-key:
+    description: "Repository key for authenticating with the GitFlow RCA backend."
+    required: true
+  ai-provider:
+    description: "AI provider to use for analysis (anthropic, vertex, gemini, openrouter, openai_compat)."
+    required: true
+  ai-key:
+    description: "API key for the chosen AI provider."
+    required: true
+  ai-model:
+    description: "AI model to use for analysis. If omitted, the backend selects a default for the provider."
+    required: false
+  ai-base-url:
+    description: "Base URL override for OpenAI-compatible or custom AI endpoints."
+    required: false
+  endpoint:
+    description: "GitFlow RCA backend endpoint."
+    required: false
+    default: "https://app.gitflow-rca.com"
+
+runs:
+  using: "node20"
+  main: "dist/index.js"
