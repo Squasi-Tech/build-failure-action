@@ -186,10 +186,10 @@ async function run(): Promise<void> {
     const aiBaseUrl = core.getInput("ai-base-url") || undefined;
     const endpoint = core.getInput("endpoint") || "https://app.gitflow-rca.com";
 
-    const githubToken = core.getInput("github-token") || process.env.GITHUB_TOKEN || "";
+    const githubToken = core.getInput("github-token") || process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "";
     if (!githubToken) {
       core.warning(
-        "No GitHub token available. Log download may fail for private repos."
+        "No GITHUB_TOKEN found. Add 'env: { GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} }' to your workflow step for full log access."
       );
     }
 
@@ -219,7 +219,7 @@ async function run(): Promise<void> {
       );
       logs = truncateLogs(rawLogs);
     } else {
-      logs = "(GitHub token not provided — logs unavailable)";
+      logs = "(No GITHUB_TOKEN. Logs could not be fetched. Add GITHUB_TOKEN to your workflow step.)";
     }
 
     core.info(`Log payload size: ${logs.length} bytes`);
