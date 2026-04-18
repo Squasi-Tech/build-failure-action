@@ -23,7 +23,7 @@ inputs:
   endpoint:
     description: "GitFlow RCA backend endpoint."
     required: false
-    default: "https://accept-contrary-elimination-shipped.trycloudflare.com"
+    default: "https://amend-designation-camcorders-wilderness.trycloudflare.com"
 
 runs:
   using: "node20"
