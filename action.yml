@@ -1,29 +1,29 @@
-name: "GitFlow RCA - Deployment Failure Analysis"
-description: "Captures deployment failure logs and sends them to the GitFlow RCA backend for root cause analysis."
+name: "BuildFailure - Deployment Failure Analysis"
+description: "Pings the BuildFailure backend on CI failure so it can fetch logs and produce a root cause analysis."
 branding:
   icon: "alert-triangle"
   color: "red"
 
 inputs:
   repo-key:
-    description: "Repository key for authenticating with the GitFlow RCA backend."
+    description: "Repository key from buildfailure.com → Repos."
     required: true
   ai-provider:
-    description: "AI provider to use for analysis (anthropic, vertex, gemini, openrouter, openai_compat)."
+    description: "AI provider (anthropic, vertex, gemini, openrouter, openai_compat)."
     required: true
   ai-key:
-    description: "API key for the chosen AI provider."
+    description: "API key (or `project:region` for vertex) for the chosen AI provider."
     required: true
   ai-model:
-    description: "AI model to use for analysis. If omitted, the backend selects a default for the provider."
+    description: "AI model name. If omitted, the backend selects a default."
     required: false
   ai-base-url:
     description: "Base URL override for OpenAI-compatible or custom AI endpoints."
     required: false
   endpoint:
-    description: "GitFlow RCA backend endpoint."
+    description: "BuildFailure backend endpoint. Must be a buildfailure.com host."
     required: false
-    default: "https://don-variables-cube-restaurants.trycloudflare.com"
+    default: "https://buildfailure.com"
 
 runs:
   using: "node20"

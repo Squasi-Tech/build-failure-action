@@ -1,8 +1,8 @@
 {
-  "name": "gitflow-rca-action",
+  "name": "buildfailure-action",
   "version": "1.0.0",
   "private": true,
-  "description": "GitHub Action to capture deployment failure logs and send them to GitFlow RCA",
+  "description": "GitHub Action to capture deployment failure logs and send them to BuildFailure",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
