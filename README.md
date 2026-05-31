@@ -1,6 +1,12 @@
-# BuildFailure GitHub Action
+<p align="center">
+  <a href="https://buildfailure.com">
+    <img src="https://buildfailure.com/logo.png" alt="BuildFailure" width="120" />
+  </a>
+</p>
 
-Trigger an AI-powered root cause analysis on every CI/CD failure.
+<h1 align="center">BuildFailure GitHub Action</h1>
+
+<p align="center">Trigger an AI-powered root cause analysis on every CI/CD failure.</p>
 
 > **Free plan: 10 RCAs to try it out.** Paid plans start at $9/mo with 100–10,000 RCAs and team features. See [pricing](https://buildfailure.com/#pricing). You bring your own AI provider key — we never store it.
 
