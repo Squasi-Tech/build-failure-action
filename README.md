@@ -2,6 +2,8 @@
 
 Trigger an AI-powered root cause analysis on every CI/CD failure.
 
+> **Free plan: 10 RCAs to try it out.** Paid plans start at $9/mo with 100–10,000 RCAs and team features. See [pricing](https://buildfailure.com/#pricing). You bring your own AI provider key — we never store it.
+
 ## Usage
 
 Drop this step at the end of any job. It only runs when an earlier step fails.
