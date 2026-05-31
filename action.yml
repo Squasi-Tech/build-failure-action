@@ -1,8 +1,8 @@
 name: "BuildFailure - Deployment Failure Analysis"
 description: "Pings the BuildFailure backend on CI failure so it can fetch logs and produce a root cause analysis."
 branding:
-  icon: "alert-triangle"
-  color: "red"
+  icon: "search"
+  color: "purple"
 
 inputs:
   repo-key:
