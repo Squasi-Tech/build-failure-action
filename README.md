@@ -1,64 +1,60 @@
-# gitflow-rca GitHub Action
+# BuildFailure GitHub Action
 
-Automatically capture deployment failure logs and trigger AI-powered root cause analysis.
+Trigger an AI-powered root cause analysis on every CI/CD failure.
 
 ## Usage
 
-```yaml
-name: RCA on failure
-on:
-  workflow_run:
-    workflows: ["CI", "Deploy"]
-    types: [completed]
+Drop this step at the end of any job. It only runs when an earlier step fails.
 
-jobs:
-  rca:
-    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: milgelren/gitflow-rca-action@v1
-        with:
-          repo-key: ${{ secrets.RCA_AGENT_KEY }}
-          ai-provider: anthropic
-          ai-key: ${{ secrets.ANTHROPIC_API_KEY }}
+```yaml
+- name: BuildFailure RCA
+  if: failure()
+  uses: Squasi-Tech/build-failure-action@v2
+  with:
+    repo-key: ${{ secrets.RCA_AGENT_KEY }}
+    ai-provider: gemini
+    ai-key: ${{ secrets.RCA_AI_KEY }}
 ```
+
+That's the whole integration. No `permissions:` block, no `GITHUB_TOKEN` plumbing — the BuildFailure backend fetches your failed job's logs server-side using the GitHub OAuth token from your buildfailure.com account.
 
 ## Inputs
 
 | Input | Required | Description |
 |-------|----------|-------------|
-| `repo-key` | Yes | Your repository key from the gitflow-rca dashboard |
-| `ai-provider` | Yes | AI provider: `anthropic`, `gemini`, `vertex`, `openrouter`, `openai_compat` |
-| `ai-key` | Yes | API key for your chosen AI provider |
-| `ai-model` | No | Override the default model for your provider |
-| `ai-base-url` | No | Custom endpoint URL (required for `openai_compat`) |
-| `endpoint` | No | gitflow-rca backend URL (defaults to hosted service) |
+| `repo-key` | Yes | Your repository key from the BuildFailure dashboard (Repos → Connect). |
+| `ai-provider` | Yes | One of: `anthropic`, `gemini`, `vertex`, `openrouter`, `openai_compat`. |
+| `ai-key` | Yes | API key for your chosen AI provider. For `vertex`, pass `project_id:region`. |
+| `ai-model` | No | Override the default model for your provider. |
+| `ai-base-url` | No | Custom endpoint URL (required for `openai_compat`). |
+| `endpoint` | No | BuildFailure backend URL. Defaults to `https://buildfailure.com`. Must be a `buildfailure.com` host or `localhost` — other endpoints are rejected. |
 
-## Supported AI Providers
+## Supported AI providers
 
-| Provider | `ai-provider` value | Default model |
-|----------|-------------------|---------------|
-| Anthropic | `anthropic` | claude-sonnet-4-20250514 |
-| Google Gemini | `gemini` | gemini-2.0-flash |
-| Google Vertex AI | `vertex` | claude-sonnet-4@20250514 |
-| OpenRouter | `openrouter` | anthropic/claude-sonnet-4 |
-| Custom (OpenAI-compatible) | `openai_compat` | (set via `ai-model`) |
+| Provider | `ai-provider` value | Notes |
+|----------|--------------------|-------|
+| Google Gemini | `gemini` | Free tier available — fastest way to start. |
+| Anthropic | `anthropic` | Excellent reasoning quality. |
+| Google Vertex AI | `vertex` | Use your existing GCP project. `ai-key` is `project_id:region`. |
+| OpenRouter | `openrouter` | One key, 100+ models including Claude, Gemini, Llama. |
+| OpenAI-compatible | `openai_compat` | Bring your own endpoint (Ollama, vLLM, Together, etc.). |
 
 ## How it works
 
-1. Detects the failed job in the current workflow run
-2. Downloads the failure logs via the GitHub API
-3. Truncates to ~50KB centered on the first error
-4. Sends logs to the gitflow-rca backend for analysis
-5. Prints the RCA dashboard link in the step summary
+1. The action runs after a failing step and posts the workflow run metadata (`owner/repo`, `run_id`, `sha`, `job`) to the BuildFailure backend.
+2. The backend polls the GitHub Actions API until the failed job finalises, then fetches the full job logs server-side using the GitHub OAuth token stored when you connected your repo on buildfailure.com.
+3. Multiple AI expert agents analyse the logs, workflow config, repo context, and commit diff in parallel — using your AI provider key.
+4. A validated root cause, a same-language remediation script, and a confidence score are posted to your dashboard (and to PR/Slack/Discord/email if configured).
+
+The action itself never reads runner files or captures logs — that closes the door on payload-inflation and secret-exfiltration via the CI workflow.
 
 ## Security
 
-- Your AI key is passed per-request and never stored
-- Only failed job logs are sent, not your source code
-- Communication is encrypted via HTTPS
-- The action never fails your workflow (errors are warnings only)
+- **No log content leaves your runner via this action.** Logs are fetched server-side from the GitHub API by the BuildFailure backend.
+- Your AI key is forwarded once per request and never stored on our side.
+- The `endpoint` input is allowlisted to `*.buildfailure.com` — it cannot be redirected to a third-party server.
+- The action will never fail your workflow; reporting errors surface as warnings only.
 
 ## Setup
 
-Full setup guide: [docs](https://gitflow-rca.dev/docs)
+Full setup guide: <https://buildfailure.com/docs>
